@@ -2,6 +2,7 @@ cmake_minimum_required(VERSION 2.8.8)
 
 project(SDDM)
 
+set(CMAKE_INSTALL_PREFIX "/usr")
 set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake;${CMAKE_MODULE_PATH}")
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_AUTOMOC ON)
@@ -31,23 +32,13 @@ if(NOT CMAKE_BUILD_TYPE)
 endif()
 
 # Handle build type
-if(CMAKE_BUILD_TYPE MATCHES [Dd]ebug)
     message(STATUS "Debug build")
     add_definitions(-DDEBUG)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -O0")
-else()
-    message(STATUS "Release build")
-    add_definitions(-DNDEBUG)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O2")
-endif()
 
 # Default absolute paths
-if(NOT DEFINED CMAKE_INSTALL_SYSCONFDIR)
     set(CMAKE_INSTALL_SYSCONFDIR "/etc")
-endif()
-if(NOT DEFINED CMAKE_INSTALL_LOCALSTATEDIR)
     set(CMAKE_INSTALL_LOCALSTATEDIR "/var")
-endif()
 
 # Standard installation paths
 include(GNUInstallDirs)
@@ -56,13 +47,11 @@ include(GNUInstallDirs)
 find_package(PkgConfig)
 
 # PAM
-if(NOT NO_PAM)
     find_package(PAM)
 
     if(PAM_FOUND)
         add_definitions(-DUSE_PAM)
     endif()
-endif()
 
 # XCB
 find_package(XCB REQUIRED)
@@ -132,6 +121,7 @@ else()
 endif()
 
 # Set constants
+set(CMAKE_INSTALL_FULL_DATADIR  "/usr/share"                CACHE PATH      "USR SHARE")
 set(DATA_INSTALL_DIR            "${CMAKE_INSTALL_FULL_DATADIR}/sddm"                CACHE PATH      "System application data install directory")
 set(DBUS_CONFIG_DIR             "${CMAKE_INSTALL_SYSCONFDIR}/dbus-1/system.d"       CACHE PATH      "DBus config files directory")
 set(STATE_DIR                   "${CMAKE_INSTALL_FULL_LOCALSTATEDIR}/lib/sddm"      CACHE PATH      "State directory")
