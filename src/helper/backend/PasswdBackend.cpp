@@ -35,6 +35,7 @@ namespace SDDM {
             : Backend(parent) { }
 
     bool PasswdBackend::authenticate() {
+    qDebug() << "bool PasswdBackend::authenticate() {";
         if (m_autologin)
             return true;
 
@@ -91,6 +92,7 @@ namespace SDDM {
     }
 
     bool PasswdBackend::start(const QString& user) {
+    qDebug() << "bool PasswdBackend::start(const QString& user) {";
         m_user = user;
         return true;
     }

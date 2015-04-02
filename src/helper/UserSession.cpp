@@ -67,15 +67,16 @@ namespace SDDM {
     }
 
     void UserSession::setupChildProcess() {
+    qDebug() << "void UserSession::setupChildProcess()";
         struct passwd *pw = getpwnam(qobject_cast<HelperApp*>(parent())->user().toLocal8Bit());
         if (setgid(pw->pw_gid) != 0)
-            bail(2);
+            { qDebug() << "set_gid failed"; bail(2); }
         if (initgroups(pw->pw_name, pw->pw_gid) != 0)
-            bail(2);
+            { qDebug() << "initgroups failed"; bail(2); }
         if (setuid(pw->pw_uid) != 0)
-            bail(2);
+            { qDebug() << "setuid failed"; bail(2); }
         if (chdir(pw->pw_dir) != 0)
-            bail(2);
+            { qDebug() << "chdir failed"; bail(2); }
 
         //we cannot use setStandardError file as this code is run in the child process
         //we want to redirect after we setuid so that .xsession-errors is owned by the user
@@ -101,6 +102,7 @@ namespace SDDM {
         }
 
         QString cookie = qobject_cast<HelperApp*>(parent())->cookie();
+        qDebug() << "QString cookie = qobject_cast<HelperApp*>(parent())->cookie();";
         if (!cookie.isEmpty()) {
             QString file = processEnvironment().value("XAUTHORITY");
             QString display = processEnvironment().value("DISPLAY");

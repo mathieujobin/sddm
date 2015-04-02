@@ -147,10 +147,12 @@ namespace SDDM {
         m_greeter->setDisplay(this);
         m_greeter->setAuthPath(qobject_cast<XorgDisplayServer *>(m_displayServer)->authPath());
         m_greeter->setSocket(m_socketServer->socketAddress());
+            qDebug() << "findGreeterTheme" << findGreeterTheme();
         m_greeter->setTheme(findGreeterTheme());
 
         // start greeter
         m_greeter->start();
+            qDebug() << "started";
 
         // reset first flag
         daemonApp->first = false;
@@ -333,8 +335,13 @@ namespace SDDM {
         // we want to avoid greeter from restarting when an authentication
         // error happens (in this case we want to show the message from the
         // greeter
-        if (status != Auth::HELPER_AUTH_ERROR)
+qDebug() << "void Display::slotHelperFinished(Auth::HelperExitStatus status) {";
+        if (status != Auth::HELPER_AUTH_ERROR) {
+qDebug() << "going to stop...";
             stop();
+} else {
+qDebug() << "what is next? respawn?";
+}
     }
 
     void Display::slotRequestChanged() {

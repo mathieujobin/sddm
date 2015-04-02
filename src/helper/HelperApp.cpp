@@ -109,16 +109,19 @@ namespace SDDM {
         SafeDataStream str(m_socket);
         str << Msg::HELLO << m_id;
         str.send();
+            qDebug() << "Sent HELLO messaeg to socket";
         if (str.status() != QDataStream::Ok)
             qCritical() << "Couldn't write initial message:" << str.status();
 
         if (!m_backend->start(m_user)) {
             authenticated(QString(""));
+            qDebug() << "failed: m_backed->start user";
             exit(Auth::HELPER_AUTH_ERROR);
             return;
         }
 
         if (!m_backend->authenticate()) {
+            qDebug() << "failed: m_backed->authentica";
             authenticated(QString(""));
             exit(Auth::HELPER_AUTH_ERROR);
             return;
@@ -126,21 +129,25 @@ namespace SDDM {
 
         m_user = m_backend->userName();
         QProcessEnvironment env = authenticated(m_user);
+            qDebug() << "got ENV";
 
         if (!m_session->path().isEmpty()) {
             env.insert(m_session->processEnvironment());
             m_session->setProcessEnvironment(env);
 
             if (!m_backend->openSession()) {
+            qDebug() << "could not open session";
                 sessionOpened(false);
                 exit(Auth::HELPER_SESSION_ERROR);
                 return;
             }
+            qDebug() << "session must have open?";
 
             sessionOpened(true);
-        }
-        else
+        } else {
+            qDebug() << "we are done, really ?";
             exit(Auth::HELPER_SUCCESS);
+}
         return;
     }
 
@@ -202,8 +209,11 @@ namespace SDDM {
         str.send();
         str.receive();
         str >> m;
+qDebug() << "sessionOpened "<< success << " completed with " << m << " != " << SESSION_STATUS;
         if (m != SESSION_STATUS) {
             qCritical() << "Received a wrong opcode instead of SESSION_STATUS:" << m;
+} else {
+qDebug() << "No critical message";
         }
     }
 

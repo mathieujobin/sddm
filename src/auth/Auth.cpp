@@ -330,7 +330,9 @@ namespace SDDM {
             args << "--autologin";
         if (d->greeter)
             args << "--greeter";
+qDebug() << "launcing sddm-helper.... with args" << args;
         d->child->start(QString("%1/sddm-helper").arg(LIBEXEC_INSTALL_DIR), args);
+qDebug() << "after launcing sddm-helper.... with bin" << LIBEXEC_INSTALL_DIR;
     }
 }
 

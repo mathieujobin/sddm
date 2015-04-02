@@ -26,6 +26,7 @@
 #include "UserSession.h"
 
 #include <QtCore/QProcessEnvironment>
+#include <QtCore/QDebug>
 
 #include <pwd.h>
 
@@ -53,9 +54,11 @@ namespace SDDM {
     }
 
     bool Backend::openSession() {
+qDebug() << "Backend::openSession()";
         struct passwd *pw;
         pw = getpwnam(qPrintable(qobject_cast<HelperApp*>(parent())->user()));
         if (pw) {
+qDebug() << "pw was found";
             QProcessEnvironment env = m_app->session()->processEnvironment();
             env.insert("HOME", pw->pw_dir);
             env.insert("PWD", pw->pw_dir);
@@ -65,8 +68,10 @@ namespace SDDM {
             if (env.contains("DISPLAY") && !env.contains("XAUTHORITY"))
                 env.insert("XAUTHORITY", QString("%1/.Xauthority").arg(pw->pw_dir));
             // TODO: I'm fairly sure this shouldn't be done for PAM sessions, investigate!
+qDebug() << "setting ENV data" << env;
             m_app->session()->setProcessEnvironment(env);
         }
+qDebug() << "call start()";
         return m_app->session()->start();
     }
 }

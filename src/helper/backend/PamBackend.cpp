@@ -56,6 +56,7 @@ namespace SDDM {
     PamData::PamData() { }
 
     AuthPrompt::Type PamData::detectPrompt(const struct pam_message* msg) const {
+    qDebug() << "AuthPrompt::Type PamData::detectPrompt(const struct pam_message* msg) const {";
         if (msg->msg_style == PAM_PROMPT_ECHO_OFF) {
             QString message(msg->msg);
             if (message.indexOf(QRegExp("\\bpassword\\b", Qt::CaseInsensitive)) >= 0) {
@@ -81,6 +82,7 @@ namespace SDDM {
     }
 
     const Prompt& PamData::findPrompt(const struct pam_message* msg) const {
+    qDebug() << "const Prompt& PamData::findPrompt(const struct pam_message* msg) const {";
         AuthPrompt::Type type = detectPrompt(msg);
 
         for (const Prompt &p : m_currentRequest.prompts) {
@@ -92,6 +94,7 @@ namespace SDDM {
     }
 
     Prompt& PamData::findPrompt(const struct pam_message* msg) {
+    qDebug() << "Prompt& PamData::findPrompt(const struct pam_message* msg) {";
         AuthPrompt::Type type = detectPrompt(msg);
 
         for (Prompt &p : m_currentRequest.prompts) {
@@ -108,6 +111,7 @@ namespace SDDM {
     * Expects an empty prompt list if the previous request has been processed
     */
     bool PamData::insertPrompt(const struct pam_message* msg, bool predict) {
+    qDebug() << "bool PamData::insertPrompt(const struct pam_message* msg, bool predict) {";
         Prompt &p = findPrompt(msg);
 
         // first, check if we already have stored this propmpt
@@ -153,6 +157,7 @@ namespace SDDM {
     }
 
     Auth::Info PamData::handleInfo(const struct pam_message* msg, bool predict) {
+    qDebug() << "Auth::Info PamData::handleInfo(const struct pam_message* msg, bool predict) {";
         if (QString(msg->msg).indexOf(QRegExp("^Changing password for [^ ]+$"))) {
             if (predict)
                 m_currentRequest = Request(changePassRequest);
@@ -165,6 +170,7 @@ namespace SDDM {
     * Destroys the prompt with that response
     */
     QByteArray PamData::getResponse(const struct pam_message* msg) {
+    qDebug() << "QByteArray PamData::getResponse(const struct pam_message* msg) {";
         QByteArray response = findPrompt(msg).response;
         m_currentRequest.prompts.removeOne(findPrompt(msg));
         if (m_currentRequest.prompts.length() == 0)
@@ -173,6 +179,7 @@ namespace SDDM {
     }
 
     const Request& PamData::getRequest() const {
+    qDebug() << "const Request& PamData::getRequest() const {";
         if (!m_sent)
             return m_currentRequest;
         else
@@ -180,6 +187,7 @@ namespace SDDM {
     }
 
     void PamData::completeRequest(const Request& request) {
+    qDebug() << "void PamData::completeRequest(const Request& request) {";
         if (request.prompts.length() != m_currentRequest.prompts.length()) {
             qWarning() << "[PAM] Different request/response list length, ignoring";
             return;
@@ -202,6 +210,7 @@ namespace SDDM {
 
 
     PamBackend::PamBackend(HelperApp *parent)
+    qDebug() << "PamBackend::PamBackend(HelperApp *parent)";
             : Backend(parent)
             , m_data(new PamData())
             , m_pam(new PamHandle(this)) {
@@ -213,6 +222,7 @@ namespace SDDM {
     }
 
     bool PamBackend::start(const QString &user) {
+    qDebug() << "bool PamBackend::start(const QString &user) {";
         bool result;
 
         QString service = "sddm";
@@ -232,6 +242,7 @@ namespace SDDM {
     }
 
     bool PamBackend::authenticate() {
+    qDebug() << "bool PamBackend::authenticate() {";
         if (!m_pam->authenticate()) {
             m_app->error(m_pam->errorString(), Auth::ERROR_AUTHENTICATION);
             return false;
@@ -244,6 +255,7 @@ namespace SDDM {
     }
 
     bool PamBackend::openSession() {
+    qDebug() << "bool PamBackend::openSession() {";
         if (!m_pam->setCred(PAM_ESTABLISH_CRED)) {
             m_app->error(m_pam->errorString(), Auth::ERROR_AUTHENTICATION);
             return false;
@@ -274,6 +286,7 @@ namespace SDDM {
     }
 
     int PamBackend::converse(int n, const struct pam_message **msg, struct pam_response **resp) {
+    qDebug() << "int PamBackend::converse(int n, const struct pam_message **msg, struct pam_response **resp) {";
         qDebug() << "[PAM] Conversation with" << n << "messages";
 
         bool newRequest = false;
