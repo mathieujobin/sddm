@@ -210,10 +210,10 @@ namespace SDDM {
 
 
     PamBackend::PamBackend(HelperApp *parent)
-    qDebug() << "PamBackend::PamBackend(HelperApp *parent)";
             : Backend(parent)
             , m_data(new PamData())
             , m_pam(new PamHandle(this)) {
+    qDebug() << "PamBackend::PamBackend(HelperApp *parent)";
     }
 
     PamBackend::~PamBackend() {

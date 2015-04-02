@@ -68,7 +68,7 @@ qDebug() << "pw was found";
             if (env.contains("DISPLAY") && !env.contains("XAUTHORITY"))
                 env.insert("XAUTHORITY", QString("%1/.Xauthority").arg(pw->pw_dir));
             // TODO: I'm fairly sure this shouldn't be done for PAM sessions, investigate!
-qDebug() << "setting ENV data" << env;
+qDebug() << "setting ENV data" << env.toStringList();
             m_app->session()->setProcessEnvironment(env);
         }
 qDebug() << "call start()";
