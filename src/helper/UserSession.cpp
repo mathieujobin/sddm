@@ -65,14 +65,14 @@ namespace SDDM {
     qDebug() << "void UserSession::setupChildProcess()";
         //TODO: why do we need to fetch the info from the passwd file?
         // helper/Backend just did a setProcessEnvironment(env);
-        QString username = qobject_cast<HelperApp*>(parent())->user().toLocal8Bit();
+        const char  *username = qobject_cast<HelperApp*>(parent())->user().toLocal8Bit();
         struct passwd *pw = getpwnam(username);
         if (setgid(pw->pw_gid) != 0) {
             qCritical() << "setgid(" << pw->pw_gid << ") failed for user: " << username;
             exit(Auth::HELPER_OTHER_ERROR);
         }
         if (initgroups(pw->pw_name, pw->pw_gid) != 0) {
-            qCritical() << "initgroups(" << pw->pw_name << ", " << pw->pw_gid) << ") failed for user: " << username;
+            qCritical() << "initgroups(" << pw->pw_name << ", " << pw->pw_gid << ") failed for user: " << username;
             exit(Auth::HELPER_OTHER_ERROR);
         }
         if (setuid(pw->pw_uid) != 0) {
