@@ -82,6 +82,7 @@ namespace SDDM {
     }
 
     void Auth::SocketServer::handleNewConnection()  {
+    qDebug() << "void Auth::SocketServer::handleNewConnection()  {";
         while (hasPendingConnections()) {
             Msg m = Msg::MSG_UNKNOWN;
             qint64 id;
@@ -122,11 +123,13 @@ namespace SDDM {
     }
 
     void Auth::Private::setSocket(QLocalSocket *socket) {
+    qDebug() << "void Auth::Private::setSocket(QLocalSocket *socket) {";
         this->socket = socket;
         connect(socket, SIGNAL(readyRead()), this, SLOT(dataPending()));
     }
 
     void Auth::Private::dataPending() {
+    qDebug() << "void Auth::Private::dataPending() {";
         Auth *auth = qobject_cast<Auth*>(parent());
         Msg m = MSG_UNKNOWN;
         SafeDataStream str(socket);
@@ -137,6 +140,7 @@ namespace SDDM {
                 QString message;
                 Error type = ERROR_NONE;
                 str >> message >> type;
+                qDebug() << message << type;
                 Q_EMIT auth->error(message, type);
                 break;
             }
@@ -184,6 +188,7 @@ namespace SDDM {
     }
 
     void Auth::Private::childExited(int exitCode, QProcess::ExitStatus exitStatus) {
+    qDebug() << "void Auth::Private::childExited(int exitCode, QProcess::ExitStatus exitStatus) {";
         if (exitStatus != QProcess::NormalExit) {
             qWarning("Auth: sddm-helper crashed (exit code %d)", exitCode);
             Q_EMIT qobject_cast<Auth*>(parent())->error(child->errorString(), ERROR_INTERNAL);
@@ -198,6 +203,7 @@ namespace SDDM {
     }
 
     void Auth::Private::childError(QProcess::ProcessError error) {
+    qDebug() << "void Auth::Private::childError(QProcess::ProcessError error) {";
         Q_UNUSED(error);
         Q_EMIT qobject_cast<Auth*>(parent())->error(child->errorString(), ERROR_INTERNAL);
     }
@@ -230,6 +236,7 @@ namespace SDDM {
     }
 
     void Auth::registerTypes() {
+    qDebug() << "void Auth::registerTypes() {";
         qmlRegisterType<AuthPrompt>();
         qmlRegisterType<AuthRequest>();
         qmlRegisterType<Auth>("Auth", 1, 0, "Auth");
@@ -257,22 +264,27 @@ namespace SDDM {
     }
 
     bool Auth::verbose() const {
+    qDebug() << "bool Auth::verbose() const {";
         return d->child->processChannelMode() == QProcess::ForwardedChannels;
     }
 
     AuthRequest *Auth::request() {
+    qDebug() << "AuthRequest *Auth::request() {";
         return d->request;
     }
 
     void Auth::insertEnvironment(const QProcessEnvironment &env) {
+    qDebug() << "void Auth::insertEnvironment(const QProcessEnvironment &env) {";
         d->environment.insert(env);
     }
 
     void Auth::insertEnvironment(const QString &key, const QString &value) {
+    qDebug() << "void Auth::insertEnvironment(const QString &key, const QString &value) {";
         d->environment.insert(key, value);
     }
 
     void Auth::setCookie(const QString& cookie) {
+    qDebug() << "void Auth::setCookie(const QString& cookie) {";
         if (cookie != d->cookie) {
             d->cookie = cookie;
             Q_EMIT cookieChanged();
@@ -280,6 +292,7 @@ namespace SDDM {
     }
 
     void Auth::setUser(const QString &user) {
+    qDebug() << "void Auth::setUser(const QString &user) {";
         if (user != d->user) {
             d->user = user;
             Q_EMIT userChanged();
@@ -287,14 +300,15 @@ namespace SDDM {
     }
 
     void Auth::setAutologin(bool on) {
+    qDebug() << "void Auth::setAutologin(bool on) {";
         if (on != d->autologin) {
             d->autologin = on;
             Q_EMIT autologinChanged();
         }
     }
 
-    void Auth::setGreeter(bool on)
-    {
+    void Auth::setGreeter(bool on) {
+    qDebug() << "void Auth::setGreeter(bool on) {";
         if (on != d->greeter) {
             d->greeter = on;
             Q_EMIT greeterChanged();
@@ -302,6 +316,7 @@ namespace SDDM {
     }
 
     void Auth::setSession(const QString& path) {
+    qDebug() << "void Auth::setSession(const QString& path) {";
         if (path != d->sessionPath) {
             d->sessionPath = path;
             Q_EMIT sessionChanged();
@@ -309,6 +324,7 @@ namespace SDDM {
     }
 
     void Auth::setVerbose(bool on) {
+    qDebug() << "void Auth::setVerbose(bool on) {";
         if (on != verbose()) {
             if (on)
                 d->child->setProcessChannelMode(QProcess::ForwardedChannels);
@@ -319,6 +335,7 @@ namespace SDDM {
     }
 
     void Auth::start() {
+    qDebug() << "void Auth::start() {";
         QStringList args;
         args << "--socket" << SocketServer::instance()->fullServerName();
         args << "--id" << QString("%1").arg(d->id);
